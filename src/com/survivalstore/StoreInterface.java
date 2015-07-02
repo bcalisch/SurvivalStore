@@ -7,15 +7,25 @@ public class StoreInterface {
         Store store = new Store();
         Wallet wallet = new Wallet();
         Cart cart = new Cart();
+        store.sortProducts("0");
         store.sortProducts("1");
+        store.sortProducts("2");
 
-        cart.addCartItems(Store.getInventoryMap(3), 5);
-        cart.addCartItems(Store.getInventoryMap(20), 10);
+
+        cart.addCartItems(3, 5);
+        cart.addCartItems(20, 10);
+        cart.addCartItems(3, 5);
 
         store.printInventory(cart.getCartItems());
         System.out.println();
 
-        store.printInventory(store.getInventory());
+        cart.removeCartItems(3, 6);
+        cart.removeCartItems(20, 9);
+
+        store.printInventory(cart.getCartItems());
+        
+
+       // store.printInventory(store.getInventory());
        // System.out.println(user1.getWallet().getCash());
 
     }

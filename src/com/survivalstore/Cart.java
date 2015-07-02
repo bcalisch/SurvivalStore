@@ -14,18 +14,36 @@ public class Cart {
         return cartItems;
     }
 
-    public void addCartItems(Product cartItems, int itemNumber) {
-       // for (int i = 0; i < itemNumber; i++) {
-        Product thisProduct = cartItems.cloneProduct();
-        this.cartItems.add(thisProduct);
-            thisProduct.setStockNum(itemNumber);
-        //}
-    }
-    public void displayCart() {
-        for(Product items: cartItems){
+    public void addCartItems(int item, int itemNumber) {
+        if ((Store.getInventoryMap(item)) != null) {
+            Product itemForCart = Store.getInventoryMap(item);
 
+
+            if (cartItems.contains(itemForCart)) {
+
+                itemForCart.setStockNum((itemForCart.getStockNum() + itemNumber));
+            } else {
+                itemForCart.setStockNum(itemNumber);
+                cartItems.add(itemForCart);
+            }
+
+        } else {
+            System.out.println("That ID does not match any items in the store, Please try a different ID");
         }
     }
-    
+
+    public void removeCartItems(int item, int itemNumber) {
+        if (cartItems.contains(Store.getInventoryMap(item))) {
+            Product itemForCartRemoval = Store.getInventoryMap(item);
+            itemForCartRemoval.setStockNum((itemForCartRemoval.getStockNum() - itemNumber));
+            if (itemForCartRemoval.getStockNum() <= 0) {
+                cartItems.remove(itemForCartRemoval);
+            }
+
+        } else {
+            System.out.println("That ID is not in your cart.  Please try a different ID");
+        }
+    }
+
 
 }

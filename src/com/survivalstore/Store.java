@@ -66,12 +66,11 @@ public class Store {
     public void printInventory(ArrayList<Product> inventory) {
         int spaceNum;
         StringBuilder space = new StringBuilder(" ");
-
-
+       // printHeader(1);
         for (int i = 0; i < inventory.size(); i++) {
 
-            if (i%15 == 0){
-                printHeader(((i/15) +1));
+            if (i%20 == 0){
+                printHeader(((i/20) +1));
             }
             Product item = inventory.get(i);
 
@@ -137,22 +136,24 @@ public class Store {
 
     }
     private static class NameComparator implements Comparator<Product> {
+        @Override
         public int compare(Product i1, Product i2) {
             return i1.getName().compareTo(i2.getName());
         }
     }
 
     private static class CategoryComparator implements Comparator<Product> {
+        @Override
         public int compare(Product i1, Product i2) {
             return i1.getCategory().compareTo(i2.getCategory());
         }
     }
 
     private static class PriceComparator implements Comparator<Product> {
+        @Override
         public int compare(Product i1, Product i2) {
             if (i1.getPrice() < i2.getPrice()) return -1;
-            if (i1.getPrice() > i2.getPrice()) return 1;
-            return 0;
+            return 1;
         }
     }
 

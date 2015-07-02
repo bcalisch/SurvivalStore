@@ -49,6 +49,7 @@ public class Product {
                     item.stockNum = Integer.parseInt(row[i]);
             }
         }
+
         item.id = createID();
         return item;
     }
@@ -106,12 +107,5 @@ public class Product {
     public void setName(String name) {
         this.name = name;
     }
-    public Product cloneProduct(){
-        Product clone = new Product();
-        clone.setCategory(getCategory());
-        clone.setId(getId());
-        clone.setPrice(getPrice());
-        clone.setName(getName());
-        return clone;
-    }
+
 }
