@@ -1,79 +1,41 @@
 package com.survivalstore;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 
 /**
  * Holds a list of product objects and allows for sorting and purchasing.
  */
 public class Store {
     private static ArrayList<Product> inventory;
-    private static HashMap<Integer, Product> inventoryMap = new HashMap<>();
-    private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-    //private String fileName;
-
+    private static NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
     public Store() {
-        inventory = loadInventory();
-    }
-
-    public static ArrayList<Product> loadInventory() {
-        ArrayList<Product> inventory = new ArrayList<Product>() {
-        };
-        String fileName = "resources/inventory.csv";
-        String line;
-
-
-        //Deal With the file
-        FileReader fileReader = null;
-        try {
-            fileReader = new FileReader(fileName);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        BufferedReader bufferedReader = new BufferedReader(fileReader);
-        try {
-            int prodID = 0;
-            bufferedReader.readLine();
-            while ((line = bufferedReader.readLine()) != null) {
-                inventory.add(Product.convertToProduct(line));
-               // inventory.get(prodID).setId(++prodID);
-
-                inventoryMap.put((++prodID), inventory.get(prodID-1));
-
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //Finished with the file
-
-
-        return inventory;
-
+        inventory = LoadInventory.loadInventory();
     }
 
     /**
-     * Prints the inventory out formatted for easy viewing.
+     *
+     * @return
      */
-    public void printInventory(ArrayList<Product> inventory) {
-        int spaceNum;
+
+
+    /**
+     * Prints out a list of Product items in a specific format
+     * @param inventory :  an array List of products
+     */
+    public static void printInventory(ArrayList<Product> inventory) {
+        int spaceNum , size = inventory.size();
         StringBuilder space = new StringBuilder(" ");
-       // printHeader(1);
-        for (int i = 0; i < inventory.size(); i++) {
+        for (int i = 0; i < size; i++) {
 
             if (i%20 == 0){
                 printHeader(((i/20) +1));
             }
             Product item = inventory.get(i);
-
             spaceNum = 30 - item.getCategory().length();
             makeSpaces(spaceNum, space);
             System.out.print(item.getCategory() + space);
@@ -96,7 +58,7 @@ public class Store {
         System.out.println();
     }
 
-    private void printHeader(int pageNumber) {
+    private static void printHeader(int pageNumber) {
         System.out.println();
         System.out.println("Page Number: "+ pageNumber);
         System.out.println();
@@ -119,21 +81,27 @@ public class Store {
      *              it doesn't sort at all.
      */
     public void sortProducts(String input) {
-        if (input.equals("0")) {
-            Collections.sort(inventory, new Store.NameComparator());
-            this.printInventory(inventory);
-        } else if (input.equals("1")) {
-            Collections.sort(inventory, new Store.CategoryComparator());
-            this.printInventory(inventory);
-        }else if (input.equals("2")) {
-            Collections.sort(inventory, new Store.PriceComparator());
-            this.printInventory(inventory);
-        }else{
-            System.out.println("You have supplied a response that we don't know how to deal with, please try again");
+        switch (input) {
+            case "0":
+                Collections.sort(inventory, new NameComparator());
+                printInventory(inventory);
+                break;
+            case "1":
+                Collections.sort(inventory, new CategoryComparator());
+                printInventory(inventory);
+                break;
+            case "2":
+                Collections.sort(inventory, new PriceComparator());
+                printInventory(inventory);
+                break;
+            default:
+                System.out.println("You have supplied a response that I don't know how to deal with, please try again");
 
+                break;
         }
 
 
+        Collections.sort(inventory, new Store.IDComparator());
     }
     private static class NameComparator implements Comparator<Product> {
         @Override
@@ -156,17 +124,22 @@ public class Store {
             return 1;
         }
     }
+    private static class IDComparator implements Comparator<Product> {
+        @Override
+        public int compare(Product i1, Product i2) {
+            if (i1.getId() < i2.getId()) return -1;
+            return 1;
+        }
+    }
 
-    public ArrayList<Product> getInventory() {
+    /**
+     * gets the current inventory list
+     * @return:  returns array list of products
+     */
+    public static ArrayList<Product> getInventory() {
         return inventory;
     }
 
 
-    public static Product getInventoryMap(int key) {
-        Product thisProduct = inventoryMap.get(key);
-      // return inventory.get(inventoryMap.get(key));
-      // System.out.println(thisProduct.getName()+ " is " + thisProduct.getPrice());
 
-        return inventoryMap.get(key);
-    }
 }
