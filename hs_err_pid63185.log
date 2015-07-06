@@ -377,7 +377,7 @@ Dynamic libraries:
 
 VM Arguments:
 jvm_args: -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:59357,suspend=y,server=n -Dfile.encoding=UTF-8 
-java_command: com.survivalstore.StoreInterface
+java_command: com.survivalstore.Store.StoreCounter
 Launcher Type: SUN_STANDARD
 
 Environment Variables:

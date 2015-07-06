@@ -1,7 +1,7 @@
-package com.survivalstore;
+package com.survivalstore.store;
 
-
-import java.text.NumberFormat;
+import com.survivalstore.input_output.LoadInventory;
+import com.survivalstore.user.Cart;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,7 +12,6 @@ import java.util.Comparator;
 public class Store {
     private static ArrayList<Product> inventory;
     private static ArrayList<Product> purchasedItems = new ArrayList<>();
-    private static NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
     public Store() {
         inventory = LoadInventory.loadInventory();
@@ -23,62 +22,7 @@ public class Store {
      * @return
      */
 
-
-    /**
-     * Prints out a list of Product items in a specific format
-     * @param inventory :  an array List of products
-     */
-    public static void printInventory(ArrayList<Product> inventory) {
-        int spaceNum , size = inventory.size();
-        StringBuilder space = new StringBuilder(" ");
-        for (int i = 0; i < size; i++) {
-
-            if (i%20 == 0){
-                printHeader(((i/20) +1));
-            }
-            Product item = inventory.get(i);
-            spaceNum = 30 - item.getCategory().length();
-            makeSpaces(spaceNum, space);
-            System.out.print(item.getCategory() + space);
-
-            spaceNum = 62 - item.getName().length();
-            makeSpaces(spaceNum, space);
-            System.out.print(item.getName() + space);
-
-            spaceNum = 27 - (currencyFormat.format(item.getPrice())).length();
-            makeSpaces(spaceNum, space);
-            System.out.print(currencyFormat.format(item.getPrice()) + "" + space);
-
-            spaceNum = 17 - (Integer.toString(item.getStockNum()).length());
-            makeSpaces(spaceNum, space);
-            System.out.print(item.getStockNum() + "" + space);
-
-            System.out.print(item.getId() + "\n");
-
-        }
-        System.out.println();
-    }
-
-    private static void printHeader(int pageNumber) {
-        System.out.println();
-        System.out.println("Page Number: "+ pageNumber);
-        System.out.println();
-        System.out.println("Category\t\t\t\t\t\t\t\t Name " + "\t\t\t\t\t\t\t\t\t\t\t\tPrice\t\t\t\t\t Count\t\t\tProduct ID");
-        System.out.println("--------\t\t\t\t\t\t\t\t ----- " + "\t\t\t\t\t\t\t\t\t\t\t\t-----\t\t\t\t\t-------\t\t\t----------");
-
-    }
-
-    private static void makeSpaces(int spaceNum, StringBuilder space) {
-        space.delete(0, space.length());
-        for (int j = 0; j < spaceNum; j++) {
-            space.append(" ");
-        }
-    }
-
-    public static Product getPurchasedItemsIndex(int indexNum) {
-        return purchasedItems.get(indexNum);
-    }
-    public static ArrayList<Product> getPurchasedItems() {
+     public static ArrayList<Product> getPurchasedItems() {
         return purchasedItems;
     }
     public static Product getInventoryItemIndex(int indexNum) {
@@ -95,17 +39,17 @@ public class Store {
      */
     public void sortProducts(String input) {
         switch (input) {
-            case "0":
+            case "Name":
                 Collections.sort(inventory, new NameComparator());
-                printInventory(inventory);
+                Print.printInventory(inventory);
                 break;
-            case "1":
+            case "Category":
                 Collections.sort(inventory, new CategoryComparator());
-                printInventory(inventory);
+                Print.printInventory(inventory);
                 break;
-            case "2":
+            case "Price":
                 Collections.sort(inventory, new PriceComparator());
-                printInventory(inventory);
+                Print.printInventory(inventory);
                 break;
             default:
                 System.out.println("You have supplied a response that I don't know how to deal with, please try again");
@@ -153,7 +97,7 @@ public class Store {
 
         }
         if(searchList.size() > 0) {
-            printInventory(searchList);
+            Print.printInventory(searchList);
         }
         else{
             System.out.println("No match!!!");

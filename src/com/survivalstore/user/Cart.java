@@ -1,6 +1,8 @@
-package com.survivalstore;
+package com.survivalstore.user;
 
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+import com.survivalstore.store.Print;
+import com.survivalstore.store.Product;
+import com.survivalstore.store.Store;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -106,7 +108,7 @@ public class Cart {
             }
             cartItems.clear();
 
-            System.out.println("You have currently purchased these items for " + total + ".  They are ready for pickup!  Have a great day!");
+            System.out.println("You have currently purchased these items for " + currencyFormat.format(total) + ".  They are ready for pickup!  Have a great day!");
         } else {
             System.out.println("You don't have enough money, BUM!!!!");
         }
@@ -144,7 +146,7 @@ public class Cart {
 
 
         if (size > 0) {
-            Store.printInventory(cartItems);
+            Print.printInventory(cartItems);
             System.out.println("Total for cart: " + currencyFormat.format(cartTotalPrice()));
             System.out.println();
         } else {

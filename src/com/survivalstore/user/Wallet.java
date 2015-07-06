@@ -1,4 +1,4 @@
-package com.survivalstore;
+package com.survivalstore.user;
 
 import java.text.NumberFormat;
 

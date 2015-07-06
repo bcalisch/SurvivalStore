@@ -1,4 +1,6 @@
-package com.survivalstore;
+package com.survivalstore.input_output;
+
+import com.survivalstore.store.Product;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -30,7 +32,7 @@ public class LoadInventory {
             int prodID = 0;
             bufferedReader.readLine();
             while ((line = bufferedReader.readLine()) != null) {
-                inventory.add(Product.convertToProduct(line));
+                inventory.add(ConvertToProduct.convertToProduct(line));
                 inventory.get(prodID).setId(++prodID);
 
             }
