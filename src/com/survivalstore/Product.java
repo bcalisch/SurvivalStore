@@ -120,4 +120,12 @@ public class Product {
         return clone;
     }
 
+    public void addStock(int stockNumber) {
+        stockNum += stockNumber;
+    }
+    public void removeStock(int stockNumber) {
+        stockNum -= stockNumber;
+    }
+
+
 }

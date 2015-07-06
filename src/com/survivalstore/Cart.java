@@ -1,5 +1,7 @@
 package com.survivalstore;
 
+import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIConversion;
+
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
@@ -18,39 +20,37 @@ public class Cart {
     public void addCartItems(int item, int itemNumber) {
         int itemIndex = item - 1;
 
-        if (Store.getInventory().size() <= item){
+        if (Store.getInventory().size() <= item) {
             System.out.println("Item not found in inventory!");
             return;
         }
         Product inventoryItem = Store.getInventory().get(itemIndex);
         if (itemNumber <= inventoryItem.getStockNum()) {
-            int stockNum = inventoryItem.getStockNum();
             Product itemForCart = Product.cloneProduct(inventoryItem);
-            Integer cartItemIndex = findCartItems(itemIndex);
+            Integer cartItemIndex = findItem(cartItems, item);
 
             itemForCart.setStockNum(itemNumber);
 
             if (cartItemIndex != null) {
-                int productNumber = cartItems.get(cartItemIndex).getStockNum();
-                cartItems.get(cartItemIndex).setStockNum(productNumber + itemNumber);
+                cartItems.get(cartItemIndex).addStock(itemNumber);
             } else {
                 cartItems.add(itemForCart);
             }
-            inventoryItem.setStockNum(stockNum - itemNumber);
-        }
-        else{
+            inventoryItem.removeStock(itemNumber);
+        } else {
             System.out.println("Item is out of stock!");
         }
 
     }
 
-    private Integer findCartItems(int itemIndex) {
+    public static Integer findItem(ArrayList<Product> list, int itemId) {
         Integer cartItemIndex = null;
         int index;
-        for (Product item : cartItems) {
+        for (Product item : list) {
             index = item.getId();
-            if (index == itemIndex) {
-                cartItemIndex = cartItems.indexOf(item);
+            if (index == itemId) {
+                cartItemIndex = list.indexOf(item);
+                break;
             }
 
         }
@@ -60,17 +60,24 @@ public class Cart {
 
 
     public void removeCartItems(int item, int itemNumber) {
-        Integer itemIndex = findCartItems(item);
+        Integer itemIndex = findItem(cartItems, item);
+
         if (itemIndex != null) {
             Product itemForCartRemoval = cartItems.get(itemIndex);
-            itemForCartRemoval.setStockNum((itemForCartRemoval.getStockNum() - itemNumber));
             int stockNumber = itemForCartRemoval.getStockNum();
-            if (stockNumber <= 0) {
-                cartItems.remove((int)itemIndex);
-            }
+            int itemsLeft = stockNumber - itemNumber;
 
-            if (stockNumber <0){
+
+            if (itemsLeft == 0) {
+                Store.getInventory().get(itemForCartRemoval.getId() - 1).addStock(stockNumber);
+                cartItems.remove((int) itemIndex);
+            } else if (itemsLeft < 0) {
+                Store.getInventoryItemIndex(itemForCartRemoval.getId() - 1).addStock(itemForCartRemoval.getStockNum());
+                cartItems.remove((int) itemIndex);
                 System.out.println("Just an FYI, you tried to take out more items than were in your cart.  No bother, as we have simply removed the entire item.  Have fun!");
+            } else {
+                Store.getInventoryItemIndex(itemForCartRemoval.getId() - 1).addStock(itemNumber);
+                itemForCartRemoval.setStockNum((itemsLeft));
             }
 
         } else {
@@ -85,19 +92,22 @@ public class Cart {
      *
      * @param wallet is the wallet object the user has.
      */
-    public void checkout(Wallet wallet){
+    public void checkout(Wallet wallet) {
         double total = cartTotalPrice();
         printCartItems();
-        if(hasEnoughMoney(wallet.getCash())){
+        if (hasEnoughMoney(wallet.getCash())) {
 
 
             wallet.takeOut(total);
+            for (Product item : cartItems) {
 
+                Store.purchase(item);
+
+            }
             cartItems.clear();
 
-            System.out.println("You have currently purchased these items for "+ total+".  They are ready for pickup!  Have a great day!");
-        }
-        else{
+            System.out.println("You have currently purchased these items for " + total + ".  They are ready for pickup!  Have a great day!");
+        } else {
             System.out.println("You don't have enough money, BUM!!!!");
         }
     }
@@ -107,19 +117,20 @@ public class Cart {
      *
      * @return returns a double value.
      */
-    public double cartTotalPrice(){
+    public double cartTotalPrice() {
         double total = 0.00;
-        for (Product item : cartItems){
+        for (Product item : cartItems) {
             total += (item.getPrice() * item.getStockNum());
         }
-     return total;
+        return total;
     }
+
     private boolean hasEnoughMoney(double cash) {
-        int totalCost=0;
-        for (Product item: cartItems){
+        int totalCost = 0;
+        for (Product item : cartItems) {
             totalCost += (item.getPrice() * item.getStockNum());
         }
-        if (totalCost <= cash){
+        if (totalCost <= cash) {
             return true;
         }
         return false;

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_survivalstore" default="compile.module.survivalstore">
+  <dirname property="module.survivalstore.basedir" file="${ant.file.module_survivalstore}"/>
+  
+  <property name="module.jdk.home.survivalstore" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.survivalstore" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.survivalstore" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.survivalstore" value="-encoding UTF-8 -source 1.7 ${compiler.args}"/>
+  
+  <property name="survivalstore.output.dir" value="${module.survivalstore.basedir}/out/production/SurvivalStore"/>
+  <property name="survivalstore.testoutput.dir" value="${module.survivalstore.basedir}/out/test/SurvivalStore"/>
+  
+  <path id="survivalstore.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="survivalstore.module.production.classpath">
+    <path refid="${module.jdk.classpath.survivalstore}"/>
+  </path>
+  
+  <path id="survivalstore.runtime.production.module.classpath">
+    <pathelement location="${survivalstore.output.dir}"/>
+  </path>
+  
+  <path id="survivalstore.module.classpath">
+    <path refid="${module.jdk.classpath.survivalstore}"/>
+    <pathelement location="${survivalstore.output.dir}"/>
+  </path>
+  
+  <path id="survivalstore.runtime.module.classpath">
+    <pathelement location="${survivalstore.testoutput.dir}"/>
+    <pathelement location="${survivalstore.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.survivalstore">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.survivalstore">
+    <patternset refid="excluded.from.module.survivalstore"/>
+  </patternset>
+  
+  <path id="survivalstore.module.sourcepath">
+    <dirset dir="${module.survivalstore.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.survivalstore" depends="compile.module.survivalstore.production,compile.module.survivalstore.tests" description="Compile module SurvivalStore"/>
+  
+  <target name="compile.module.survivalstore.production" depends="register.custom.compilers" description="Compile module SurvivalStore; production classes">
+    <mkdir dir="${survivalstore.output.dir}"/>
+    <javac2 destdir="${survivalstore.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.survivalstore}/javac">
+      <compilerarg line="${compiler.args.survivalstore}"/>
+      <bootclasspath refid="survivalstore.module.bootclasspath"/>
+      <classpath refid="survivalstore.module.production.classpath"/>
+      <src refid="survivalstore.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.survivalstore"/>
+    </javac2>
+    
+    <copy todir="${survivalstore.output.dir}">
+      <fileset dir="${module.survivalstore.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.survivalstore.tests" depends="register.custom.compilers,compile.module.survivalstore.production" description="compile module SurvivalStore; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.survivalstore" description="cleanup module">
+    <delete dir="${survivalstore.output.dir}"/>
+    <delete dir="${survivalstore.testoutput.dir}"/>
+  </target>
+</project>

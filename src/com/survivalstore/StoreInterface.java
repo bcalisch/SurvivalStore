@@ -15,7 +15,7 @@ public class StoreInterface {
         Store store = new Store();
         Wallet wallet = new Wallet();
         Cart cart = new Cart();
-        boolean exit = false, back = false;
+        boolean exit = false;
         printWelcome();
         while (!(exit)) exit = mainMenu(store, wallet, cart);
 
@@ -65,16 +65,64 @@ public class StoreInterface {
             case ("3"):
                 wallet.printWallet();
                 break;
-            case ("4"):
+            case ("5"):
                 exit = true;
                 System.out.println("Good Bye!");
                 break;
+            case ("4"):
+                while (!back){
+                    back = adminLogin(store, cart, wallet);
+                }
+                 break;
             default: {
                 System.out.println("I don't understand, please try again");
             }
         }
         return exit;
     }
+
+    private static boolean adminLogin(Store store, Cart cart, Wallet wallet) {
+        boolean back = false;
+        Scanner askPassword = new Scanner(System.in);
+        System.out.println("Please enter the admin password!");
+        String password = askPassword.nextLine();
+        if(password.equals("AdminPassword")){
+            System.out.println("You have entered in the correct password!!!");
+            while(!back){
+                back = adminInterface(store, cart, wallet);
+            }
+            back = true;
+        }else{
+            System.out.println("That is a bad password, please try again!");
+        }
+
+        return back;
+    }
+
+    private static boolean adminInterface(Store store, Cart cart, Wallet wallet) {
+        boolean back = false;
+        Scanner adminChoice = new Scanner(System.in);
+        printAdminMenu();
+        String input = adminChoice.nextLine().toUpperCase();
+        if(input.equals("0")){
+            Store.printInventory(Store.getInventory());
+        }else if(input.contains("1 -")){
+            String searchString = input.substring(input.indexOf('-')+1, input.length()).replaceAll(" ", "");
+            System.out.println("You tried to search for "+searchString);
+            store.searchInventory(searchString);
+
+        }else if(input.equals("2")){
+            Store.printInventory(Store.getPurchasedItems());
+        }else if(input.equals("3")){
+           Store.printInventory(Store.getPopularItems());
+        }else if(input.equals("4")){
+            System.out.println("So long, my admin friend!");
+            back = true;
+        }
+        return back;
+    }
+
+
 
     private static boolean cartInterface( Cart cart, Wallet wallet) {
         Scanner Q1 = new Scanner(System.in), Q2 = new Scanner(System.in), Q3 = new Scanner(System.in);
@@ -154,7 +202,22 @@ public class StoreInterface {
         }
         return back;
     }
+    /*See all products
+Search for a product
+See purchased items
+See popular items
+Exit program*/
+    private static void printAdminMenu() {
+        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   What would you like to do?");
+        System.out.println("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   Here are some options...");
+        System.out.println();
+        System.out.println("\t\t\t\t\t\t\t\t\t\t\t (0)...............See list of products");
+        System.out.println("  \t\t\t\t\t\t\t\t\t\t\t ('1 -'+ name to search....Search for a product by name");
+        System.out.println("  \t\t\t\t\t\t\t\t\t\t\t (2)...............View Purchased Items");
+        System.out.println("  \t\t\t\t\t\t\t\t\t\t\t (3)...............View popular items");
+        System.out.println("  \t\t\t\t\t\t\t\t\t\t\t (4)............... Exit Program");
 
+    }
     private static void printMenu() {
         System.out.println("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   What would you like to do?");
         System.out.println("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t   Here are some options...");
@@ -163,7 +226,9 @@ public class StoreInterface {
         System.out.println("  \t\t\t\t\t\t\t\t\t\t\t (1 -[C, N, P])....See list of products in order of (C)ategory, (N)ame, or (P)rice");
         System.out.println("  \t\t\t\t\t\t\t\t\t\t\t (2)...............View Shopping Cart");
         System.out.println("  \t\t\t\t\t\t\t\t\t\t\t (3)...............View Wallet");
-        System.out.println("  \t\t\t\t\t\t\t\t\t\t\t (4)...............Exit Program");
+        System.out.println("  \t\t\t\t\t\t\t\t\t\t\t (4)............... Login as Admin");
+        System.out.println("  \t\t\t\t\t\t\t\t\t\t\t (5)...............Exit Program");
+
     }
 
     private static void printWelcome() {
